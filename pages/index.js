@@ -1,29 +1,55 @@
 import React, { Component } from 'react';
 import { Card, Button } from 'semantic-ui-react';
 import factory from '../ethereum/factory';
+import Raffle from '../ethereum/raffle';
 import Layout from '../components/Layout';
 import { Link } from '../routes';
 
 class RaffleIndex extends Component {
 	static async getInitialProps() {
-		const raffles = await factory.methods.getDeployedRaffles().call();
-		return { raffles: raffles };
+		const rafflesArr = [];
+		const getRaffles = await factory.methods.getDeployedRaffles().call();
+		const raffles = getRaffles.map(async address => {
+			const raffle = Raffle(address);
+			const res = await raffle.methods.getRaffleSummary().call();
+			// console.log(res);
+			const raffleObj = {
+				raffleAddress: res[0],
+				raffleBalance: res[1],
+				soldTickets: res[2],
+				remainingNumberOfTickets: res[3],
+				ticketsBlock: res[4],
+				soldTicketsNumbers: res[5]
+			};
+			rafflesArr.push(raffleObj);
+			return rafflesArr;
+		});
+		return { raffles: rafflesArr };
 	}
 
 	renderRaffles() {
-		const items = this.props.raffles.map(address => {
+		console.log('$%$%$%$%$%$%$% ', this.props);
+		const items = this.props.raffles.map((raffle, index) => {
 			return {
-				header: address,
+				header: raffle.raffleAddress,
 				description: (
-					<Link route={`/raffles/${address}`}>
-						<a>View raffle</a>
-					</Link>
+					<div>
+						<ul>
+							<li>Balance: {raffle.raffleBalance} ETH</li>
+							<li>
+								Remaining Number of Tickets: {raffle.remainingNumberOfTickets}
+							</li>
+						</ul>
+						<Link route={`/raffles/${raffle.raffleAddress}`}>
+							<a>View raffle</a>
+						</Link>
+					</div>
 				),
 				fluid: true
 			};
 		});
 
-		return <Card.Group items={items} />;
+		return <Card.Group keys={items.id} items={items} />;
 	}
 
 	render() {

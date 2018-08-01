@@ -31,6 +31,7 @@ class RaffleShow extends Component {
 		const raffle = Raffle(props.query.address);
 		const summary = await raffle.methods.getRaffleSummary().call();
 		const manager = await raffle.methods.manager().call();
+		console.log(summary);
 		return {
 			raffleAddress: props.query.address,
 			raffleBalance: web3.utils.fromWei(summary[1], 'ether'),
@@ -98,7 +99,7 @@ class RaffleShow extends Component {
 							{items}
 						</Form.Field>
 					</Form.Group>
-					<Button as="div" labelPosition="right">
+					<Button disabled={this.state.loading} as="div" labelPosition="right">
 						<Button icon loading={this.state.loading}>
 							<Icon name="ticket" />
 							Buy Ticket
