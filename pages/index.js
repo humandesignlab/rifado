@@ -4,16 +4,15 @@ import factory from '../ethereum/factory';
 import Raffle from '../ethereum/raffle';
 import Layout from '../components/Layout';
 import { Link } from '../routes';
-
 class RaffleIndex extends Component {
-	static async getInitialProps() {
-		const rafflesArr = [];
+	state = { raffles: [] };
+	async componentWillMount() {
 		const getRaffles = await factory.methods.getDeployedRaffles().call();
 		const raffles = getRaffles.map(async address => {
 			const raffle = Raffle(address);
 			const res = await raffle.methods.getRaffleSummary().call();
 			// console.log(res);
-			const raffleObj = {
+			const raffleObj = await {
 				raffleAddress: res[0],
 				raffleBalance: res[1],
 				soldTickets: res[2],
@@ -21,15 +20,17 @@ class RaffleIndex extends Component {
 				ticketsBlock: res[4],
 				soldTicketsNumbers: res[5]
 			};
-			rafflesArr.push(raffleObj);
-			return rafflesArr;
+			await this.state.raffles.push(raffleObj);
 		});
-		return { raffles: rafflesArr };
 	}
 
+	// static async getInitialProps() {
+	// 	return { raffles: rafflesArr };
+	// }
+
 	renderRaffles() {
-		console.log('$%$%$%$%$%$%$% ', this.props);
-		const items = this.props.raffles.map((raffle, index) => {
+		console.log('this.state ', this.state);
+		const items = this.state.raffles.map((raffle, index) => {
 			return {
 				header: raffle.raffleAddress,
 				description: (
