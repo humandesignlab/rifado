@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
-import { Card } from 'semantic-ui-react';
+import {
+	Card,
+	Label,
+	Segment,
+	Statistic,
+	Responsive,
+	Icon
+} from 'semantic-ui-react';
 import factory from '../ethereum/factory';
 import Raffle from '../ethereum/raffle';
 import web3 from '../ethereum/web3';
 import { Link } from '../routes';
+
 class RafflesList extends Component {
 	state = { raffles: [] };
 	async componentWillMount() {
@@ -25,28 +33,77 @@ class RafflesList extends Component {
 	}
 
 	render() {
+		<h3>Open raffles</h3>;
 		const items = this.state.raffles.map((raffle, index) => {
 			return {
-				header: raffle.raffleAddress,
+				key: index,
+				header: (
+					<Label size="large" attached="top">
+						Raffle: {raffle.raffleAddress}
+					</Label>
+				),
 				description: (
 					<div>
-						<ul>
-							<li>Accumulated Prize: {raffle.raffleBalance} ETH</li>
-							<li>
-								Remaining Number of Tickets: {raffle.remainingNumberOfTickets}
-							</li>
-							<li>Chances of Winning: 1 in {raffle.ticketsBlock}</li>
-						</ul>
+						<p>This is the raffle description </p>
+						<Responsive
+							as={Segment.Group}
+							{...Responsive.onlyComputer}
+							horizontal
+						>
+							<Segment inverted color="teal" textAlign="center">
+								<Statistic inverted size="tiny">
+									<Statistic.Value>
+										<Icon name="ethereum" /> {raffle.raffleBalance} ETH
+									</Statistic.Value>
+									<Statistic.Label>Accumulated Prize</Statistic.Label>
+								</Statistic>
+							</Segment>
+							<Segment textAlign="center">
+								<Statistic
+									color={
+										raffle.remainingNumberOfTickets === '0' ? 'grey' : 'green'
+									}
+									size="tiny"
+								>
+									<Statistic.Value>
+										<Icon name="ticket" /> {raffle.remainingNumberOfTickets}
+									</Statistic.Value>
+									<Statistic.Label>Remaining tickets</Statistic.Label>
+								</Statistic>
+							</Segment>
+							<Segment textAlign="center">
+								<Statistic size="tiny">
+									<Statistic.Value>
+										<Icon color="green" name="check circle" /> 1 in{' '}
+										{raffle.ticketsBlock}
+									</Statistic.Value>
+									<Statistic.Label>Chances per Ticket</Statistic.Label>
+								</Statistic>
+							</Segment>
+							<Segment textAlign="center">
+								<Statistic size="tiny">
+									<Statistic.Value>
+										<Icon color="green" name="calendar" /> 12/12/18
+									</Statistic.Value>
+									<Statistic.Label>Draw date</Statistic.Label>
+								</Statistic>
+							</Segment>
+						</Responsive>
 						<Link route={`/raffles/${raffle.raffleAddress}`}>
-							<a>View raffle</a>
+							<a>View raffle details</a>
 						</Link>
 					</div>
 				),
 				fluid: true
 			};
 		});
-
-		return <Card.Group keys={items.id} items={items} />;
+		console.log('items ', items);
+		return (
+			<div>
+				<h3>Open raffles</h3>{' '}
+				<Card.Group stackable={true} keys={items.id} items={items} />
+			</div>
+		);
 	}
 }
 
