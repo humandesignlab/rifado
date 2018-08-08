@@ -38,13 +38,31 @@ class RafflesList extends Component {
 			return {
 				key: index,
 				header: (
-					<Label size="large" attached="top">
-						Raffle: {raffle.raffleAddress}
-					</Label>
+					<div>
+						<Responsive
+							as={Label}
+							size="large"
+							attached="top"
+							textAlign="left"
+							{...Responsive.onlyComputer}
+						>
+							Raffle: {raffle.raffleAddress}
+						</Responsive>
+						<Responsive
+							minWidth={320}
+							maxWidth={991}
+							as={Label}
+							size="small"
+							attached="top"
+							textAlign="left"
+						>
+							Raffle: {raffle.raffleAddress}
+						</Responsive>
+						<p>This is the raffle description </p>
+					</div>
 				),
 				description: (
 					<div>
-						<p>This is the raffle description </p>
 						<Responsive
 							as={Segment.Group}
 							{...Responsive.onlyComputer}
@@ -89,6 +107,48 @@ class RafflesList extends Component {
 								</Statistic>
 							</Segment>
 						</Responsive>
+
+						<Responsive as={Segment.Group} minWidth={320} maxWidth={991}>
+							<Segment inverted color="teal" textAlign="center">
+								<Statistic inverted size="tiny">
+									<Statistic.Value>
+										<Icon name="ethereum" /> {raffle.raffleBalance} ETH
+									</Statistic.Value>
+									<Statistic.Label>Accumulated Prize</Statistic.Label>
+								</Statistic>
+							</Segment>
+							<Segment textAlign="center">
+								<Statistic
+									color={
+										raffle.remainingNumberOfTickets === '0' ? 'grey' : 'green'
+									}
+									size="tiny"
+								>
+									<Statistic.Value>
+										<Icon name="ticket" /> {raffle.remainingNumberOfTickets}
+									</Statistic.Value>
+									<Statistic.Label>Remaining tickets</Statistic.Label>
+								</Statistic>
+							</Segment>
+							<Segment textAlign="center">
+								<Statistic size="tiny">
+									<Statistic.Value>
+										<Icon color="green" name="check circle" /> 1 in{' '}
+										{raffle.ticketsBlock}
+									</Statistic.Value>
+									<Statistic.Label>Chances per Ticket</Statistic.Label>
+								</Statistic>
+							</Segment>
+							<Segment textAlign="center">
+								<Statistic size="tiny">
+									<Statistic.Value>
+										<Icon color="green" name="calendar" /> 12/12/18
+									</Statistic.Value>
+									<Statistic.Label>Draw date</Statistic.Label>
+								</Statistic>
+							</Segment>
+						</Responsive>
+
 						<Link route={`/raffles/${raffle.raffleAddress}`}>
 							<a>View raffle details</a>
 						</Link>
