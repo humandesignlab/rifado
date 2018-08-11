@@ -8,6 +8,7 @@ import { Router } from '../../routes';
 class RaffleNew extends Component {
 	state = {
 		ticketBlockSize: '',
+		setDrawDate: '',
 		errorMessage: '',
 		loading: false
 	};
@@ -19,7 +20,7 @@ class RaffleNew extends Component {
 		try {
 			const accounts = await web3.eth.getAccounts();
 			await factory.methods
-				.createRaffle(this.state.ticketBlockSize)
+				.createRaffle(this.state.ticketBlockSize, this.state.setDrawDate)
 				.send({ from: accounts[0] });
 			Router.pushRoute('/');
 		} catch (err) {
@@ -52,6 +53,18 @@ class RaffleNew extends Component {
 							value={this.state.ticketBlockSize}
 							onChange={event =>
 								this.setState({ ticketBlockSize: event.target.value })
+							}
+						/>
+						<label>
+							Enter the number of seconds you want to set for your raffle to
+							draw.
+						</label>
+						<Input
+							label="Draw Date in seconds"
+							labelPosition="right"
+							value={this.state.setDrawDate}
+							onChange={event =>
+								this.setState({ setDrawDate: event.target.value })
 							}
 						/>
 					</Form.Field>

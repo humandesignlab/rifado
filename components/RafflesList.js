@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Countdown from 'react-countdown-now';
 import {
 	Card,
 	Label,
@@ -26,7 +27,8 @@ class RafflesList extends Component {
 				soldTickets: res[2],
 				remainingNumberOfTickets: res[3],
 				ticketsBlock: res[4],
-				soldTicketsNumbers: res[5]
+				soldTicketsNumbers: res[5],
+				drawDate: parseInt(res[6]) * 1000
 			};
 			await this.state.raffles.push(raffleObj);
 		});
@@ -34,6 +36,20 @@ class RafflesList extends Component {
 
 	render() {
 		<h3>Open raffles</h3>;
+		const Completionist = () => <span>Raffle has ended</span>;
+		const renderer = ({ days, hours, minutes, seconds, completed }) => {
+			if (completed) {
+				// Render a completed state
+				return <Completionist />;
+			} else {
+				// Render a countdown
+				return (
+					<span>
+						{days}:{hours}:{minutes}:{seconds}
+					</span>
+				);
+			}
+		};
 		const items = this.state.raffles.map((raffle, index) => {
 			return {
 				key: index,
@@ -43,7 +59,7 @@ class RafflesList extends Component {
 							as={Label}
 							size="large"
 							attached="top"
-							textAlign="left"
+							textalign="left"
 							{...Responsive.onlyComputer}
 						>
 							Raffle: {raffle.raffleAddress}
@@ -101,9 +117,14 @@ class RafflesList extends Component {
 							<Segment textAlign="center">
 								<Statistic size="tiny">
 									<Statistic.Value>
-										<Icon color="green" name="calendar" /> 12/12/18
+										<Icon color="green" name="calendar" />
+										<Countdown
+											date={raffle.drawDate}
+											renderer={renderer}
+											// daysInHours={false}
+										/>
 									</Statistic.Value>
-									<Statistic.Label>Draw date</Statistic.Label>
+									<Statistic.Label>Time Left to Draw</Statistic.Label>
 								</Statistic>
 							</Segment>
 						</Responsive>

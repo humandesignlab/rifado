@@ -4,8 +4,8 @@ import "./oraclizeAPI_0.5.sol";
 contract LottoCoinFactory {
   address[] public deployedRaffles;
 
-  function createRaffle(uint _ticketBlockSize) public {
-    address newRaffle = new LottoCoin(msg.sender, _ticketBlockSize);
+  function createRaffle(uint _ticketBlockSize, uint _timeTillDraw) public {
+    address newRaffle = new LottoCoin(msg.sender, _ticketBlockSize, _timeTillDraw);
     deployedRaffles.push(newRaffle);
   }
 
@@ -24,6 +24,7 @@ contract LottoCoin is usingOraclize {
     uint[] public soldTicketsNumbers;
     uint public soldTickets;
     uint public remainingNumberOfTickets;
+    uint public drawDate;
 
 
   struct Ticket {
@@ -39,11 +40,12 @@ contract LottoCoin is usingOraclize {
   mapping(uint => bool)  boughtTicket;
   Ticket[] public ticketOwnersList;
 
-  function LottoCoin(address creator, uint tickets) public {
+  function LottoCoin(address creator, uint tickets, uint secondsToDraw) public {
     manager = creator;
     createTicketBlock(tickets);
     oraclize_setProof(proofType_Ledger); // sets the Ledger authenticity proof in the constructor
-    callWinnerNumber(tickets);
+    callWinnerNumber(tickets, secondsToDraw);
+    drawDate = now + secondsToDraw;
   }
 
   function createTicketBlock(uint _ticketAmount) public returns(uint) {
@@ -89,7 +91,7 @@ contract LottoCoin is usingOraclize {
             /* selfdestruct(house); */
     }
 
-  function callWinnerNumber(uint _maxNumber) payable {
+  function callWinnerNumber(uint _maxNumber, uint _secondsToDraw) payable {
 
     string memory string1 = "[URL] ['json(https://api.random.org/json-rpc/1/invoke).result.random.data.0', '\\n{\"jsonrpc\":\"2.0\",\"method\":\"generateIntegers\",\"params\":{\"apiKey\":\"${[decrypt] BGykTJKvMgwZnt5I1XXeiitWXMRsen505Fp5NlgS9SD8cPtCqtAP9qCGE7fv0YNgthHP15OCfEyePYr6STJ53ienL9q5W8rSR7gnnNXvf95BuG0sbNELzppn19VfNQKIjTQt7RDlY/yW0tkMK3u/chANbLOe}\",\"n\":1,\"min\":1,\"max\":";
 
@@ -99,7 +101,7 @@ contract LottoCoin is usingOraclize {
 
     string memory query = strConcat(string1, string2, string3);
 
-    bytes32 queryId = oraclize_query(300, "nested", query);
+    bytes32 queryId = oraclize_query(_secondsToDraw, "nested", query);
   }
 
   function getWinner(uint _number) public returns (address, uint, uint, uint) {
@@ -114,7 +116,7 @@ contract LottoCoin is usingOraclize {
           ticketOwnersList[i].id,
           ticketOwnersList[i].timeStamp
         );
-      }
+      } //TODO: else refund money if no player has the winner number
     }
   }
 
@@ -126,7 +128,7 @@ contract LottoCoin is usingOraclize {
       return soldTicketsNumbers;
   }
 
-  function getRaffleSummary() public returns (address, uint, uint, uint, uint, uint[]) {
+  function getRaffleSummary() public returns (address, uint, uint, uint, uint, uint[], uint) {
       soldTickets = soldTicketsNumbers.length;
       remainingNumberOfTickets = ticketsBlock - soldTickets;
       return (
@@ -135,7 +137,8 @@ contract LottoCoin is usingOraclize {
           soldTickets,
           remainingNumberOfTickets,
           ticketsBlock,
-          soldTicketsNumbers
+          soldTicketsNumbers,
+          drawDate
           );
   }
 }
