@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "mocha",
-		"dev-local": "node server.js",
+		"devlocal": "node server.js",
 		"dev": "next",
 		"build": "next build",
 		"start": "next start -p $PORT",

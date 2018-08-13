@@ -36,7 +36,7 @@ class RafflesList extends Component {
 
 	render() {
 		<h3>Open raffles</h3>;
-		const Completionist = () => <span>Raffle has ended</span>;
+		const Completionist = () => <span> Raffle has ended</span>;
 		const renderer = ({ days, hours, minutes, seconds, completed }) => {
 			if (completed) {
 				// Render a completed state
@@ -163,9 +163,14 @@ class RafflesList extends Component {
 							<Segment textAlign="center">
 								<Statistic size="tiny">
 									<Statistic.Value>
-										<Icon color="green" name="calendar" /> 12/12/18
+										<Icon color="green" name="calendar" />
+										<Countdown
+											date={raffle.drawDate}
+											renderer={renderer}
+											// daysInHours={false}
+										/>
 									</Statistic.Value>
-									<Statistic.Label>Draw date</Statistic.Label>
+									<Statistic.Label>Time Left to Draw</Statistic.Label>
 								</Statistic>
 							</Segment>
 						</Responsive>

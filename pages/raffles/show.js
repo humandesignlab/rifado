@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Countdown from 'react-countdown-now';
 import {
 	Grid,
 	Icon,
@@ -39,6 +40,7 @@ class RaffleShow extends Component {
 			raffleRemainingTickets: summary[3],
 			raffleTicketsBlockLength: summary[4],
 			raffleSoldTicketsNumbers: summary[5],
+			raffleDrawDate: parseInt(summary[6]) * 1000,
 			raffleManager: manager
 		};
 	}
@@ -125,6 +127,20 @@ class RaffleShow extends Component {
 	}
 
 	render() {
+		const Completionist = () => <span>Raffle has ended</span>;
+		const renderer = ({ days, hours, minutes, seconds, completed }) => {
+			if (completed) {
+				// Render a completed state
+				return <Completionist />;
+			} else {
+				// Render a countdown
+				return (
+					<span>
+						{days}:{hours}:{minutes}:{seconds}
+					</span>
+				);
+			}
+		};
 		return (
 			<Layout>
 				<Responsive as={Segment} minWidth={320} maxWidth={991}>
@@ -136,40 +152,50 @@ class RaffleShow extends Component {
 					</Card>
 					{this.renderTicketNumbers()}
 					<Segment.Group>
-						<Segment textAlign="center">
-							<Statistic size="tiny">
+						<Segment inverted color="teal" textAlign="center">
+							<Statistic inverted size="tiny">
 								<Statistic.Value>
-									<Icon name="ethereum" />
-									{this.props.raffleBalance} ETH
+									<Icon name="ethereum" /> {this.props.raffleBalance} ETH
 								</Statistic.Value>
-								<Statistic.Label>Balance</Statistic.Label>
+								<Statistic.Label>Accumulated Prize</Statistic.Label>
 							</Statistic>
 						</Segment>
+
 						<Segment textAlign="center">
-							<Statistic size="tiny">
+							<Statistic
+								color={
+									this.props.remainingNumberOfTickets === '0' ? 'grey' : 'green'
+								}
+								size="tiny"
+							>
 								<Statistic.Value>
-									<Icon name="users" />
-									{this.props.raffleSoldTickets}
-								</Statistic.Value>
-								<Statistic.Label>Players</Statistic.Label>
-							</Statistic>
-						</Segment>
-						<Segment textAlign="center">
-							<Statistic size="tiny">
-								<Statistic.Value>
-									<Icon name="ticket" />
-									{this.props.raffleRemainingTickets}
+									<Icon name="ticket" /> {this.props.raffleRemainingTickets}
 								</Statistic.Value>
 								<Statistic.Label>Remaining tickets</Statistic.Label>
 							</Statistic>
 						</Segment>
+
 						<Segment textAlign="center">
 							<Statistic size="tiny">
 								<Statistic.Value>
-									<Icon name="calendar" />
-									12/12/18
+									<Icon color="green" name="check circle" /> 1 in{' '}
+									{this.props.raffleTicketsBlockLength}
 								</Statistic.Value>
-								<Statistic.Label>Draw date</Statistic.Label>
+								<Statistic.Label>Chances per Ticket</Statistic.Label>
+							</Statistic>
+						</Segment>
+
+						<Segment textAlign="center">
+							<Statistic size="tiny">
+								<Statistic.Value>
+									<Icon color="green" name="calendar" />
+									<Countdown
+										date={this.props.raffleDrawDate}
+										renderer={renderer}
+										// daysInHours={false}
+									/>
+								</Statistic.Value>
+								<Statistic.Label>Time Left to Draw</Statistic.Label>
 							</Statistic>
 						</Segment>
 					</Segment.Group>
@@ -185,47 +211,59 @@ class RaffleShow extends Component {
 					</Card>
 					<Grid divided="vertically">
 						<Grid.Row columns={2} divided>
-							<Grid.Column width={10}>
+							<Grid.Column width={4}>{this.renderTicketNumbers()}</Grid.Column>
+							<Grid.Column width={12}>
 								<Segment.Group horizontal>
-									<Segment textAlign="center">
-										<Statistic size="tiny">
+									<Segment inverted color="teal" textAlign="center">
+										<Statistic inverted size="tiny">
 											<Statistic.Value>
-												<Icon name="ethereum" />
-												{this.props.raffleBalance} ETH
+												<Icon name="ethereum" /> {this.props.raffleBalance} ETH
 											</Statistic.Value>
-											<Statistic.Label>Balance</Statistic.Label>
+											<Statistic.Label>Accumulated Prize</Statistic.Label>
 										</Statistic>
 									</Segment>
+
 									<Segment textAlign="center">
-										<Statistic size="tiny">
+										<Statistic
+											color={
+												this.props.remainingNumberOfTickets === '0'
+													? 'grey'
+													: 'green'
+											}
+											size="tiny"
+										>
 											<Statistic.Value>
-												<Icon name="users" />
-												{this.props.raffleSoldTickets}
-											</Statistic.Value>
-											<Statistic.Label>Players</Statistic.Label>
-										</Statistic>
-									</Segment>
-									<Segment textAlign="center">
-										<Statistic size="tiny">
-											<Statistic.Value>
-												<Icon name="ticket" />
+												<Icon name="ticket" />{' '}
 												{this.props.raffleRemainingTickets}
 											</Statistic.Value>
 											<Statistic.Label>Remaining tickets</Statistic.Label>
 										</Statistic>
 									</Segment>
+
 									<Segment textAlign="center">
 										<Statistic size="tiny">
 											<Statistic.Value>
-												<Icon name="calendar" />
-												12/12/18
+												<Icon color="green" name="check circle" /> 1 in{' '}
+												{this.props.raffleTicketsBlockLength}
 											</Statistic.Value>
-											<Statistic.Label>Draw date</Statistic.Label>
+											<Statistic.Label>Chances per Ticket</Statistic.Label>
+										</Statistic>
+									</Segment>
+									<Segment textAlign="center">
+										<Statistic size="tiny">
+											<Statistic.Value>
+												<Icon color="green" name="calendar" />
+												<Countdown
+													date={this.props.raffleDrawDate}
+													renderer={renderer}
+													// daysInHours={false}
+												/>
+											</Statistic.Value>
+											<Statistic.Label>Time Left to Draw</Statistic.Label>
 										</Statistic>
 									</Segment>
 								</Segment.Group>
 							</Grid.Column>
-							<Grid.Column width={6}>{this.renderTicketNumbers()}</Grid.Column>
 						</Grid.Row>
 					</Grid>
 					<p>Created by: {this.props.raffleManager}</p>

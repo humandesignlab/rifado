@@ -10,24 +10,6 @@ class RaffleIndex extends Component {
 		return (
 			<Layout>
 				<div>
-					<Segment>
-						<Link route="/">
-							<a>
-								<Button content="See all raffles" icon="eye" primary={true} />
-							</a>
-						</Link>
-						<Link route="/raffles/new">
-							<a>
-								<Button
-									floated="left"
-									content="Create a new raffle"
-									icon="add circle"
-									primary={true}
-								/>
-							</a>
-						</Link>
-					</Segment>
-
 					<Segment vertical>
 						<RafflesList />
 					</Segment>
