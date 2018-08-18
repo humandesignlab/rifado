@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Message } from 'semantic-ui-react';
+import {
+	DateInput,
+	TimeInput,
+	DateTimeInput,
+	DatesRangeInput
+} from 'semantic-ui-calendar-react';
+
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
@@ -10,8 +17,20 @@ class RaffleNew extends Component {
 		ticketBlockSize: '',
 		setDrawDate: '',
 		errorMessage: '',
-		loading: false
+		loading: false,
+		date: '',
+		time: '',
+		dateTime: '',
+		datesRange: ''
 	};
+
+	handleChange = (event, { name, value }) => {
+		if (this.state.hasOwnProperty(name)) {
+			this.setState({ [name]: value });
+		}
+		console.log(this.state.date);
+	};
+
 	onSubmit = async event => {
 		event.preventDefault();
 
@@ -68,6 +87,14 @@ class RaffleNew extends Component {
 							}
 						/>
 					</Form.Field>
+					<DateInput
+						name="date"
+						placeholder="Date"
+						value={this.state.date}
+						iconPosition="left"
+						onChange={this.handleChange}
+					/>
+
 					<Message
 						error
 						header="Something went wrong!"
