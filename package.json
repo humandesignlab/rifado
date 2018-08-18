@@ -2,6 +2,9 @@
 	"name": "ether-raffle",
 	"version": "1.0.0",
 	"description": "An ether raffle",
+	"engines": {
+		"node": "8.9.0"
+	},
 	"main": "index.js",
 	"scripts": {
 		"test": "mocha",
