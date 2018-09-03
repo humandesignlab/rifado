@@ -86,7 +86,7 @@ class Ticket extends Component {
     };
     const renderUserTickets = this.state.userTickets.map((item, index) => {
       return (
-        <div style={ticketStyle}>
+        <div key={index} style={ticketStyle}>
           <div>
             <Icon size="large" name="ticket" />
             <div>{String(item.pickedNumber / 1000).slice(2)}</div>

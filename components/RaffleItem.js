@@ -286,13 +286,17 @@ class RaffleItem extends Component {
               </Grid.Column>
             </Grid.Row>
           </Grid>
-          <p>Created by: {this.state.raffleManager}</p>
-          <p>
+          <Divider hidden />
+
+          <Label attached="bottom left" basic color="teal">
+            Created by: {this.state.raffleManager}
+          </Label>
+          <Label attached="bottom right" basic color="teal">
             Draw Date:{" "}
             {moment(this.state.raffleDrawDate)
               .add(5, "minutes")
-              .format()}
-          </p>
+              .format("YYYY-MM-DD")}
+          </Label>
         </Responsive>
       </div>
     );
