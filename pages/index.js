@@ -69,8 +69,7 @@ class RaffleIndex extends Component {
           </Modal.Content>
           <Modal.Actions>
             <Button color="green" onClick={this.handleClose} inverted>
-              RaffleNew.onSubmit()
-              <Icon name="checkmark" /> Got it
+              <Icon name="checkmark" /> Create my Raffle
             </Button>
           </Modal.Actions>
         </Modal>
