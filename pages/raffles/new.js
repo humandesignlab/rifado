@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Form, Input, Message } from 'semantic-ui-react';
+import { Button, Form, Input, Message, Container } from 'semantic-ui-react';
 import {
 	DateInput,
 	TimeInput,
 	DateTimeInput,
 	DatesRangeInput
 } from 'semantic-ui-calendar-react';
-
+import moment from 'moment';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
@@ -24,16 +24,26 @@ class RaffleNew extends Component {
 		datesRange: ''
 	};
 
-	handleChange = (event, { name, value }) => {
+	componentDidMount = () => {
+		this.props.onRef(this);
+	};
+	componentWillUnmount = () => {
+		this.props.onRef(undefined);
+	};
+
+	handleDateChange = (event, { name, value }) => {
 		if (this.state.hasOwnProperty(name)) {
 			this.setState({ [name]: value });
 		}
-		console.log(this.state.date);
+		this.state.setDrawDate = moment(this.state.date).diff(
+			moment().startOf('day'),
+			'seconds'
+		);
+		console.log(this.state.setDrawDate);
 	};
 
 	onSubmit = async event => {
-		event.preventDefault();
-
+		// event.preventDefault();
 		this.setState({ loading: true, errorMessage: '' });
 
 		try {
@@ -51,7 +61,7 @@ class RaffleNew extends Component {
 
 	render() {
 		return (
-			<Layout>
+			<Container>
 				<h3>How many tickets will your raffle have?</h3>
 				<p>
 					The less tickets your ticket block has, each player has more chances
@@ -74,25 +84,19 @@ class RaffleNew extends Component {
 								this.setState({ ticketBlockSize: event.target.value })
 							}
 						/>
-						<label>
-							Enter the number of seconds you want to set for your raffle to
-							draw.
-						</label>
-						<Input
-							label="Draw Date in seconds"
-							labelPosition="right"
-							value={this.state.setDrawDate}
-							onChange={event =>
-								this.setState({ setDrawDate: event.target.value })
-							}
-						/>
 					</Form.Field>
 					<DateInput
 						name="date"
-						placeholder="Date"
+						placeholder="Set Draw Date"
+						startMode="day"
+						initialDate={moment()}
+						dateFormat="YYYY-MM-DD"
+						minDate={moment()}
 						value={this.state.date}
 						iconPosition="left"
-						onChange={this.handleChange}
+						onChange={this.handleDateChange}
+						closable={true}
+						maxDate={moment().add(1, 'M')}
 					/>
 
 					<Message
@@ -104,7 +108,7 @@ class RaffleNew extends Component {
 						Create raffle
 					</Button>
 				</Form>
-			</Layout>
+			</Container>
 		);
 	}
 }

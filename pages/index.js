@@ -1,43 +1,87 @@
-import React, { Component } from 'react';
-import { Card, Button, Segment, Divider } from 'semantic-ui-react';
-import factory from '../ethereum/factory';
-import Raffle from '../ethereum/raffle';
-import Layout from '../components/Layout';
-import RaffleItem from '../components/RaffleItem';
-import { Link } from '../routes';
+import React, { Component } from "react";
+import {
+  Card,
+  Button,
+  Segment,
+  Divider,
+  Modal,
+  Header,
+  Icon
+} from "semantic-ui-react";
+import factory from "../ethereum/factory";
+import Raffle from "../ethereum/raffle";
+import Layout from "../components/Layout";
+import RaffleItem from "../components/RaffleItem";
+import RaffleNew from "./raffles/new";
+import { Link } from "../routes";
 class RaffleIndex extends Component {
-	static async getInitialProps(props) {
-		const getRaffles = await factory.methods.getDeployedRaffles().call();
-		return { getRaffles };
-	}
-	render() {
-		let items = null;
+  state = { modalOpen: false };
 
-		if (this.props.getRaffles) {
-			console.log('this.props.getRaffles ', this.props.getRaffles);
-			items = (
-				<div>
-					{this.props.getRaffles.map((item, index) => {
-						return (
-							<div key={index}>
-								<RaffleItem key={index} rafflename={item} /> <Divider hidden />
-							</div>
-						);
-					})}
-				</div>
-			);
-		}
+  handleOpen = () => this.setState({ modalOpen: true });
 
-		return (
-			<Layout>
-				<div>
-					<Segment key={items} vertical>
-						{items}
-					</Segment>
-				</div>
-			</Layout>
-		);
-	}
+  handleClose = () => {
+    this.setState({ modalOpen: false });
+    this.child.onSubmit();
+  };
+  static async getInitialProps(props) {
+    const getRaffles = await factory.methods.getDeployedRaffles().call();
+    return { getRaffles };
+  }
+  render() {
+    let items = null;
+
+    if (this.props.getRaffles) {
+      items = (
+        <div>
+          {this.props.getRaffles.map((item, index) => {
+            return (
+              <div key={index}>
+                <RaffleItem key={index} rafflename={item} /> <Divider hidden />
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    return (
+      <Layout>
+        <Modal
+          trigger={
+            <Button
+              onClick={this.handleOpen}
+              content="Create a new raffle"
+              icon="add circle"
+              color="green"
+            />
+          }
+          open={this.state.modalOpen}
+          onClose={this.handleClose}
+          closeIcon
+        >
+          <Header
+            icon="add circle"
+            color="green"
+            content="Create a new raffle"
+          />
+          <Modal.Content>
+            <RaffleNew onRef={ref => (this.child = ref)} />
+          </Modal.Content>
+          <Modal.Actions>
+            <Button color="green" onClick={this.handleClose} inverted>
+              RaffleNew.onSubmit()
+              <Icon name="checkmark" /> Got it
+            </Button>
+          </Modal.Actions>
+        </Modal>
+        <div>
+          <Segment loading={this.state.loading} vertical>
+            {items}
+          </Segment>
+        </div>
+      </Layout>
+    );
+  }
 }
 
 export default RaffleIndex;

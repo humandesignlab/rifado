@@ -1,9 +1,9 @@
-import web3 from './web3';
-import LottoCoinFactory from './build/LottoCoinFactory.json';
+import web3 from "./web3";
+import LottoCoinFactory from "./build/LottoCoinFactory.json";
 
 const instance = new web3.eth.Contract(
-	JSON.parse(LottoCoinFactory.interface),
-	'0x9D915e3A0d4e1904Bda647ACd6FeB3e02E5143bf'
+  JSON.parse(LottoCoinFactory.interface),
+  "0x9c3EF2D815295F54017D1738864576baa5fC439E"
 );
 
 export default instance;
