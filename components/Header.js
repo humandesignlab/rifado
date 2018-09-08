@@ -4,7 +4,7 @@ import { Link } from "../routes";
 
 export default () => {
   return (
-    <Menu>
+    <Menu stackable>
       <Link route="/">
         <a className="item">Lottoether.com</a>
       </Link>

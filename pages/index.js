@@ -57,7 +57,6 @@ class RaffleIndex extends Component {
           }
           open={this.state.modalOpen}
           onClose={this.handleClose}
-          closeIcon
         >
           <Header
             icon="add circle"
@@ -73,11 +72,9 @@ class RaffleIndex extends Component {
             </Button>
           </Modal.Actions>
         </Modal>
-        <div>
-          <Segment loading={this.state.loading} vertical>
-            {items}
-          </Segment>
-        </div>
+        <Segment loading={this.state.loading} vertical>
+          {items}
+        </Segment>
       </Layout>
     );
   }

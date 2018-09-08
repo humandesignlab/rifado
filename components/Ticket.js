@@ -18,8 +18,6 @@ class Ticket extends Component {
     const raffleAddress = this.props.ticketrafflename;
     const ticketBlockSize = this.props.ticketownerlist - 1;
 
-    console.log("ticketBlockSize ", ticketBlockSize);
-
     const raffle = Raffle(raffleAddress);
     const ownerArr = [];
 
@@ -30,7 +28,6 @@ class Ticket extends Component {
     const getRafflesImIn = await raffle.methods
       .getTicketOwnersList(ownerArr)
       .call();
-    console.log(ownerArr);
     const ticketOwnerLength = getRafflesImIn[0].length;
     const FIELD_TICKET_BUYER = 0;
     const FIELD_PICKED_NUMBER = 1;
@@ -54,7 +51,7 @@ class Ticket extends Component {
 
   render() {
     const ticketStyle = {
-      width: "120px",
+      minWidth: "120px",
       height: "80px",
       display: "block",
       backgroundColor: "rgb(0, 181, 173)",
@@ -62,7 +59,8 @@ class Ticket extends Component {
       padding: "10px",
       textAlign: "center",
       margin: "10px",
-      borderRadius: "4px"
+      borderRadius: "4px",
+      float: "left"
     };
 
     const ticketLeftPunch = {
@@ -97,7 +95,12 @@ class Ticket extends Component {
         </div>
       );
     });
-    return <Segment.Group horizontal> {renderUserTickets} </Segment.Group>;
+    return (
+      <Segment.Group horizontal style={{ overflow: "auto" }}>
+        {" "}
+        {renderUserTickets}{" "}
+      </Segment.Group>
+    );
   }
 }
 export default Ticket;

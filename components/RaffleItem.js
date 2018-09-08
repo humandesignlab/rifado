@@ -44,7 +44,6 @@ class RaffleItem extends Component {
       raffleManager: manager,
       soldTicketsLength: summary[5].length
     });
-    console.log("this.state.soldTicketsLength ", this.state.soldTicketsLength);
   }
 
   onSubmit = async event => {
@@ -63,7 +62,7 @@ class RaffleItem extends Component {
         from: accounts[0],
         value: web3.utils.toWei("0.011", "ether")
       });
-      Router.replaceRoute(`/raffles/${this.state.raffleAddress}`);
+      Router.pushRoute("/");
     } catch (err) {
       this.setState({ errorMessage: err.message });
     }
@@ -93,7 +92,7 @@ class RaffleItem extends Component {
       <Segment vertical>
         <Divider fitted hidden />
         <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
-          <Form.Group>
+          <Segment textAlign="center">
             <Form.Field
               value={this.state.value}
               onChange={event => this.setState({ value: event.target.value })}
@@ -102,15 +101,19 @@ class RaffleItem extends Component {
               <option disabled label="Select a ticket number:" />;
               {items}
             </Form.Field>
-          </Form.Group>
-          <Button disabled={this.state.loading} as="div" labelPosition="right">
-            <Button color="teal" icon loading={this.state.loading}>
-              <Icon size="small" name="ticket" /> Buy Ticket
+            <Button
+              disabled={this.state.loading}
+              as="div"
+              labelPosition="right"
+            >
+              <Button color="teal" icon loading={this.state.loading}>
+                <Icon size="small" name="ticket" /> Buy Ticket
+              </Button>
+              <Label as="a" basic pointing="left">
+                0.011 ETH
+              </Label>
             </Button>
-            <Label as="a" basic pointing="left">
-              0.011 ETH
-            </Label>
-          </Button>
+          </Segment>
           <Message
             error
             header="Something went wrong!"
@@ -151,22 +154,21 @@ class RaffleItem extends Component {
     };
 
     const RenderTicket = () => (
-      <div>
-        <Ticket
-          ticketrafflename={this.props.rafflename}
-          ticketownerlist={this.state.soldTicketsLength}
-        />
-      </div>
+      <Ticket
+        ticketrafflename={this.props.rafflename}
+        ticketownerlist={this.state.soldTicketsLength}
+      />
     );
     return (
       <div>
-        <Responsive as={Segment} minWidth={320} maxWidth={991}>
-          <Label basic color="teal" attached="top left">
+        <Responsive as={Segment} minWidth={320} maxWidth={991} secondary>
+          <Label basic color="teal" attached="top">
             <Link route={`/raffles/${this.state.raffleAddress}`}>
-              <a>Raffle hash: {this.state.raffleAddress}</a>
+              <a>Raffle: {this.state.raffleAddress}</a>
             </Link>
           </Label>
           {this.renderTicketNumbers()}
+          <RenderTicket />
           <Segment.Group>
             <Segment inverted color="teal" textAlign="center">
               <Statistic inverted size="tiny">
@@ -216,13 +218,15 @@ class RaffleItem extends Component {
             </Segment>
           </Segment.Group>
           <p>Created by: {this.state.raffleManager}</p>
-          <p>Draw Date: {moment(this.state.raffleDrawDate).format()}</p>
+          <p>
+            Draw Date: {moment(this.state.raffleDrawDate).format("YYYY-MMM-DD")}
+          </p>
         </Responsive>
 
         <Responsive as={Segment} {...Responsive.onlyComputer} secondary>
           <Label ribbon size="big" basic color="teal">
             <Link route={`/raffles/${this.state.raffleAddress}`}>
-              <a>Raffle hash: {this.state.raffleAddress}</a>
+              <a>Raffle: {this.state.raffleAddress}</a>
             </Link>
           </Label>
 
@@ -235,10 +239,10 @@ class RaffleItem extends Component {
               <Grid.Column width={4}>{this.renderTicketNumbers()}</Grid.Column>
               <Grid.Column width={12}>
                 <Segment.Group horizontal>
-                  <Segment inverted color="teal" textAlign="center">
-                    <Statistic inverted size="tiny">
+                  <Segment color="teal" textAlign="center">
+                    <Statistic size="tiny">
                       <Statistic.Value>
-                        <Icon size="small" name="ethereum" />{" "}
+                        <Icon color="teal" size="small" name="ethereum" />{" "}
                         {this.state.raffleBalance} ETH
                       </Statistic.Value>
                       <Statistic.Label>Accumulated Prize</Statistic.Label>
@@ -295,7 +299,7 @@ class RaffleItem extends Component {
             Draw Date:{" "}
             {moment(this.state.raffleDrawDate)
               .add(5, "minutes")
-              .format("YYYY-MM-DD")}
+              .format("YYYY/MMM/DD")}
           </Label>
         </Responsive>
       </div>
