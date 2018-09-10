@@ -6,7 +6,8 @@ import {
   Divider,
   Modal,
   Header,
-  Icon
+  Icon,
+  Dropdown
 } from "semantic-ui-react";
 import factory from "../ethereum/factory";
 import Raffle from "../ethereum/raffle";
@@ -14,8 +15,19 @@ import Layout from "../components/Layout";
 import RaffleItem from "../components/RaffleItem";
 import RaffleNew from "./raffles/new";
 import { Link } from "../routes";
+
+const options = [
+  { key: 1, text: "Date (recent first)", value: 1 },
+  { key: 2, text: "Date (older first)", value: 2 },
+  { key: 3, text: "Prize amount (more first)", value: 3 },
+  { key: 4, text: "Prize amount (less first)", value: 4 },
+  { key: 5, text: "Sold tickets (more first)", value: 5 },
+  { key: 6, text: "Sold tickets (less first)", value: 6 }
+];
 class RaffleIndex extends Component {
-  state = { modalOpen: false, rafflesArr: [] };
+  state = { modalOpen: false };
+
+  handleChange = (e, { value }) => this.setState({ value });
 
   handleOpen = () => this.setState({ modalOpen: true });
 
@@ -24,7 +36,6 @@ class RaffleIndex extends Component {
     this.child.onSubmit();
   };
   static async getInitialProps(props) {
-    const rafflesArr = [];
     const getRaffles = await factory.methods.getDeployedRaffles().call();
     const raffleItems = await Promise.all(
       getRaffles.map(item => {
@@ -36,30 +47,48 @@ class RaffleIndex extends Component {
     return { getRaffles, raffleItems };
   }
   render() {
+    const { value } = this.state;
     console.log("this.props.raffleItems ", this.props.raffleItems);
+    console.log("this.state ", this.state);
     let items = null;
 
-    if (this.state.rafflesArr) {
+    if (this.props.raffleItems) {
       items = (
         <div>
-          {this.props.raffleItems.map((item, index) => {
-            return (
-              <div key={index}>
-                <RaffleItem
-                  key={index}
-                  rafflename={item[0]}
-                  balance={item[1]}
-                  soldTickets={item[2]}
-                  remainingTickets={item[3]}
-                  blockLength={item[4]}
-                  soldNumbers={item[5]}
-                  drawDate={item[6]}
-                  creator={item[7]}
-                />{" "}
-                <Divider hidden />
-              </div>
-            );
-          })}
+          {this.props.raffleItems
+            .sort((a, b) => {
+              if (this.state.value === 1) {
+                return a[6] > b[6];
+              } else if (this.state.value === 2) {
+                return a[6] < b[6];
+              } else if (this.state.value === 3) {
+                return a[1] < b[1];
+              } else if (this.state.value === 4) {
+                return a[1] > b[1];
+              } else if (this.state.value === 5) {
+                return a[2] < b[2];
+              } else if (this.state.value === 6) {
+                return a[2] > b[2];
+              }
+            })
+            .map((item, index) => {
+              return (
+                <div key={index}>
+                  <RaffleItem
+                    key={index}
+                    rafflename={item[0]}
+                    balance={item[1]}
+                    soldTickets={item[2]}
+                    remainingTickets={item[3]}
+                    blockLength={item[4]}
+                    soldNumbers={item[5]}
+                    drawDate={item[6]}
+                    creator={item[7]}
+                  />{" "}
+                  <Divider hidden />
+                </div>
+              );
+            })}
         </div>
       );
     }
@@ -92,6 +121,13 @@ class RaffleIndex extends Component {
             </Button>
           </Modal.Actions>
         </Modal>
+        <Dropdown
+          onChange={this.handleChange}
+          options={options}
+          placeholder="Sort by:"
+          selection
+          value={value}
+        />
         <Segment loading={this.state.loading} vertical>
           {items}
         </Segment>
