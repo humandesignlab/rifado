@@ -3,7 +3,7 @@ import LottoCoinFactory from "./build/LottoCoinFactory.json";
 
 const instance = new web3.eth.Contract(
   JSON.parse(LottoCoinFactory.interface),
-  "0x9c3EF2D815295F54017D1738864576baa5fC439E"
+  "0xF174d83EB6D945e629594A8Cc8e2e2618E1942D7"
 );
 
 export default instance;

@@ -134,7 +134,7 @@ contract LottoCoin is usingOraclize {
     return soldTicketsNumbers;
   }
 
-  function getRaffleSummary() public returns (address, uint, uint, uint, uint, uint[], uint) {
+  function getRaffleSummary() public returns (address, uint, uint, uint, uint, uint[], uint, address) {
     soldTickets = soldTicketsNumbers.length;
     remainingNumberOfTickets = ticketsBlock - soldTickets;
     return (
@@ -144,7 +144,8 @@ contract LottoCoin is usingOraclize {
       remainingNumberOfTickets,
       ticketsBlock,
       soldTicketsNumbers,
-      drawDate
+      drawDate,
+      manager
     );
   }
 }
