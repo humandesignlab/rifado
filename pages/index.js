@@ -15,7 +15,7 @@ import RaffleItem from "../components/RaffleItem";
 import RaffleNew from "./raffles/new";
 import { Link } from "../routes";
 class RaffleIndex extends Component {
-  state = { modalOpen: false };
+  state = { modalOpen: false, rafflesArr: [] };
 
   handleOpen = () => this.setState({ modalOpen: true });
 
@@ -24,19 +24,39 @@ class RaffleIndex extends Component {
     this.child.onSubmit();
   };
   static async getInitialProps(props) {
+    const rafflesArr = [];
     const getRaffles = await factory.methods.getDeployedRaffles().call();
-    return { getRaffles };
+    const raffleItems = await Promise.all(
+      getRaffles.map(item => {
+        const raffle = Raffle(item);
+        const summarys = raffle.methods.getRaffleSummary().call();
+        return summarys;
+      })
+    );
+    return { getRaffles, raffleItems };
   }
   render() {
+    console.log("this.props.raffleItems ", this.props.raffleItems);
     let items = null;
 
-    if (this.props.getRaffles) {
+    if (this.state.rafflesArr) {
       items = (
         <div>
-          {this.props.getRaffles.map((item, index) => {
+          {this.props.raffleItems.map((item, index) => {
             return (
               <div key={index}>
-                <RaffleItem key={index} rafflename={item} /> <Divider hidden />
+                <RaffleItem
+                  key={index}
+                  rafflename={item[0]}
+                  balance={item[1]}
+                  soldTickets={item[2]}
+                  remainingTickets={item[3]}
+                  blockLength={item[4]}
+                  soldNumbers={item[5]}
+                  drawDate={item[6]}
+                  creator={item[7]}
+                />{" "}
+                <Divider hidden />
               </div>
             );
           })}

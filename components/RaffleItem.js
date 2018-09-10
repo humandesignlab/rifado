@@ -28,27 +28,10 @@ class RaffleItem extends Component {
     loadingMessage: "",
     hideStandByMessage: true
   };
-  async componentDidMount(props) {
-    const address = this.props.rafflename;
-    const raffle = Raffle(address);
-    const summary = await raffle.methods.getRaffleSummary().call();
-    const manager = await raffle.methods.manager().call();
-    this.setState({
-      raffleAddress: address,
-      raffleBalance: web3.utils.fromWei(summary[1], "ether"),
-      raffleSoldTickets: summary[2],
-      raffleRemainingTickets: summary[3],
-      raffleTicketsBlockLength: summary[4],
-      raffleSoldTicketsNumbers: summary[5],
-      raffleDrawDate: parseInt(summary[6]) * 1000,
-      raffleManager: manager,
-      soldTicketsLength: summary[5].length
-    });
-  }
 
   onSubmit = async event => {
     event.preventDefault();
-    const raffle = Raffle(this.state.raffleAddress);
+    const raffle = Raffle(this.props.rafflename);
     this.setState({
       loading: true,
       errorMessage: "",
@@ -76,12 +59,12 @@ class RaffleItem extends Component {
 
   renderTicketNumbers = () => {
     const ticketsArray = [];
-    for (let i = 1; i <= this.state.raffleTicketsBlockLength; i++) {
+    for (let i = 1; i <= this.props.blockLength; i++) {
       ticketsArray.push(i.toString());
     }
 
     const reminingTicketsArray = ticketsArray.filter(
-      f => !this.state.raffleSoldTicketsNumbers.includes(f)
+      f => !this.props.soldNumbers.includes(f)
     );
 
     const items = reminingTicketsArray.map((item, index) => {
@@ -156,15 +139,15 @@ class RaffleItem extends Component {
     const RenderTicket = () => (
       <Ticket
         ticketrafflename={this.props.rafflename}
-        ticketownerlist={this.state.soldTicketsLength}
+        ticketownerlist={this.props.soldNumbers.length}
       />
     );
     return (
       <div>
         <Responsive as={Segment} minWidth={320} maxWidth={991} secondary>
           <Label basic color="teal" attached="top">
-            <Link route={`/raffles/${this.state.raffleAddress}`}>
-              <a>Raffle: {this.state.raffleAddress}</a>
+            <Link route={`/raffles/${this.props.rafflename}`}>
+              <a>Raffle: {this.props.rafflename}</a>
             </Link>
           </Label>
           {this.renderTicketNumbers()}
@@ -174,7 +157,7 @@ class RaffleItem extends Component {
               <Statistic inverted size="tiny">
                 <Statistic.Value>
                   <Icon size="small" name="ethereum" />{" "}
-                  {this.state.raffleBalance} ETH
+                  {web3.utils.fromWei(this.props.balance, "ether")} ETH
                 </Statistic.Value>
                 <Statistic.Label>Accumulated Prize</Statistic.Label>
               </Statistic>
@@ -182,14 +165,12 @@ class RaffleItem extends Component {
 
             <Segment textAlign="center">
               <Statistic
-                color={
-                  this.state.raffleRemainingTickets === "0" ? "grey" : "green"
-                }
+                color={this.props.remainingTickets === "0" ? "grey" : "green"}
                 size="tiny"
               >
                 <Statistic.Value>
                   <Icon size="small" name="ticket" />{" "}
-                  {this.state.raffleRemainingTickets}
+                  {this.props.remainingTickets}
                 </Statistic.Value>
                 <Statistic.Label>Remaining tickets</Statistic.Label>
               </Statistic>
@@ -199,7 +180,7 @@ class RaffleItem extends Component {
               <Statistic size="tiny">
                 <Statistic.Value>
                   <Icon size="small" color="green" name="check circle" /> 1 in{" "}
-                  {this.state.raffleTicketsBlockLength}
+                  {this.props.blockLength}
                 </Statistic.Value>
                 <Statistic.Label>Chances per Ticket</Statistic.Label>
               </Statistic>
@@ -209,7 +190,7 @@ class RaffleItem extends Component {
               <Statistic size="tiny">
                 <Statistic.Value>
                   <Countdown
-                    date={this.state.raffleDrawDate}
+                    date={parseInt(this.props.drawDate) * 1000}
                     renderer={renderer}
                     // daysInHours={false}
                   />
@@ -217,16 +198,17 @@ class RaffleItem extends Component {
               </Statistic>
             </Segment>
           </Segment.Group>
-          <p>Created by: {this.state.raffleManager}</p>
+          <p>Created by: {this.props.creator}</p>
           <p>
-            Draw Date: {moment(this.state.raffleDrawDate).format("YYYY-MMM-DD")}
+            Draw Date:{" "}
+            {moment(parseInt(this.props.drawDate) * 1000).format("YYYY-MMM-DD")}
           </p>
         </Responsive>
 
         <Responsive as={Segment} {...Responsive.onlyComputer} secondary>
           <Label ribbon size="big" basic color="teal">
-            <Link route={`/raffles/${this.state.raffleAddress}`}>
-              <a>Raffle: {this.state.raffleAddress}</a>
+            <Link route={`/raffles/${this.props.rafflename}`}>
+              <a>Raffle: {this.props.rafflename}</a>
             </Link>
           </Label>
 
@@ -243,7 +225,7 @@ class RaffleItem extends Component {
                     <Statistic size="tiny">
                       <Statistic.Value>
                         <Icon color="teal" size="small" name="ethereum" />{" "}
-                        {this.state.raffleBalance} ETH
+                        {web3.utils.fromWei(this.props.balance, "ether")} ETH
                       </Statistic.Value>
                       <Statistic.Label>Accumulated Prize</Statistic.Label>
                     </Statistic>
@@ -252,15 +234,13 @@ class RaffleItem extends Component {
                   <Segment textAlign="center">
                     <Statistic
                       color={
-                        this.state.raffleRemainingTickets === "0"
-                          ? "grey"
-                          : "green"
+                        this.props.remainingTickets === "0" ? "grey" : "green"
                       }
                       size="tiny"
                     >
                       <Statistic.Value>
                         <Icon size="small" name="ticket" />{" "}
-                        {this.state.raffleRemainingTickets}
+                        {this.props.remainingTickets}
                       </Statistic.Value>
                       <Statistic.Label>Remaining tickets</Statistic.Label>
                     </Statistic>
@@ -270,7 +250,7 @@ class RaffleItem extends Component {
                     <Statistic size="tiny">
                       <Statistic.Value>
                         <Icon size="small" color="green" name="check circle" />{" "}
-                        1 in {this.state.raffleTicketsBlockLength}
+                        1 in {this.props.blockLength}
                       </Statistic.Value>
                       <Statistic.Label>Chances per Ticket</Statistic.Label>
                     </Statistic>
@@ -279,7 +259,7 @@ class RaffleItem extends Component {
                     <Statistic size="tiny">
                       <Statistic.Value>
                         <Countdown
-                          date={this.state.raffleDrawDate}
+                          date={parseInt(this.props.drawDate) * 1000}
                           renderer={renderer}
                           // daysInHours={false}
                         />
@@ -293,11 +273,11 @@ class RaffleItem extends Component {
           <Divider hidden />
 
           <Label attached="bottom left" basic color="teal">
-            Created by: {this.state.raffleManager}
+            Created by: {this.props.creator}
           </Label>
           <Label attached="bottom right" basic color="teal">
             Draw Date:{" "}
-            {moment(this.state.raffleDrawDate)
+            {moment(parseInt(this.props.drawDate) * 1000)
               .add(5, "minutes")
               .format("YYYY/MMM/DD")}
           </Label>
