@@ -127,7 +127,7 @@ class RaffleItem extends Component {
         // Render a countdown
         return (
           <span>
-            <Icon size="small" color="green" name="calendar" /> {days}:{hours}:{
+            <Icon size="small" color="teal" name="calendar" /> {days}:{hours}:{
               minutes
             }:{seconds}
             <Statistic.Label>Time Left to Draw</Statistic.Label>
@@ -146,9 +146,7 @@ class RaffleItem extends Component {
       <div>
         <Responsive as={Segment} minWidth={320} maxWidth={991} secondary>
           <Label basic color="teal" attached="top">
-            <Link route={`/raffles/${this.props.rafflename}`}>
-              <a>Raffle: {this.props.rafflename}</a>
-            </Link>
+            Raffle: {this.props.rafflename}
           </Label>
           {this.renderTicketNumbers()}
           <RenderTicket />
@@ -165,7 +163,7 @@ class RaffleItem extends Component {
 
             <Segment textAlign="center">
               <Statistic
-                color={this.props.remainingTickets === "0" ? "grey" : "green"}
+                color={this.props.remainingTickets === "0" ? "grey" : "teal"}
                 size="tiny"
               >
                 <Statistic.Value>
@@ -179,7 +177,7 @@ class RaffleItem extends Component {
             <Segment textAlign="center">
               <Statistic size="tiny">
                 <Statistic.Value>
-                  <Icon size="small" color="green" name="check circle" /> 1 in{" "}
+                  <Icon size="small" color="teal" name="check circle" /> 1 in{" "}
                   {this.props.blockLength}
                 </Statistic.Value>
                 <Statistic.Label>Chances per Ticket</Statistic.Label>
@@ -206,11 +204,10 @@ class RaffleItem extends Component {
         </Responsive>
 
         <Responsive as={Segment} {...Responsive.onlyComputer} secondary>
-          <Label ribbon size="big" basic color="teal">
-            <Link route={`/raffles/${this.props.rafflename}`}>
-              <a>Raffle: {this.props.rafflename}</a>
-            </Link>
+          <Label attached="top left" size="large" basic color="teal">
+            Raffle: {this.props.rafflename}
           </Label>
+          <Divider hidden />
 
           <RenderTicket />
 
@@ -234,7 +231,7 @@ class RaffleItem extends Component {
                   <Segment textAlign="center">
                     <Statistic
                       color={
-                        this.props.remainingTickets === "0" ? "grey" : "green"
+                        this.props.remainingTickets === "0" ? "grey" : "teal"
                       }
                       size="tiny"
                     >
@@ -249,8 +246,8 @@ class RaffleItem extends Component {
                   <Segment textAlign="center">
                     <Statistic size="tiny">
                       <Statistic.Value>
-                        <Icon size="small" color="green" name="check circle" />{" "}
-                        1 in {this.props.blockLength}
+                        <Icon size="small" color="teal" name="check circle" /> 1
+                        in {this.props.blockLength}
                       </Statistic.Value>
                       <Statistic.Label>Chances per Ticket</Statistic.Label>
                     </Statistic>
@@ -275,7 +272,7 @@ class RaffleItem extends Component {
           <Label attached="bottom left" basic color="teal">
             Created by: {this.props.creator}
           </Label>
-          <Label attached="bottom right" basic color="teal">
+          <Label attached="top right" size="large" basic color="teal">
             Draw Date:{" "}
             {moment(parseInt(this.props.drawDate) * 1000)
               .add(5, "minutes")

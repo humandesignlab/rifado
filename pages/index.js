@@ -17,24 +17,18 @@ import RaffleNew from "./raffles/new";
 import { Link } from "../routes";
 
 const options = [
-  { key: 1, text: "Date (recent first)", value: 1 },
-  { key: 2, text: "Date (older first)", value: 2 },
+  { key: 1, text: "Draw Date (sooner first)", value: 1 },
+  { key: 2, text: "Draw Date (later first)", value: 2 },
   { key: 3, text: "Prize amount (more first)", value: 3 },
   { key: 4, text: "Prize amount (less first)", value: 4 },
   { key: 5, text: "Sold tickets (more first)", value: 5 },
   { key: 6, text: "Sold tickets (less first)", value: 6 }
 ];
 class RaffleIndex extends Component {
-  state = { modalOpen: false };
+  state = { value: null };
 
   handleChange = (e, { value }) => this.setState({ value });
 
-  handleOpen = () => this.setState({ modalOpen: true });
-
-  handleClose = () => {
-    this.setState({ modalOpen: false });
-    this.child.onSubmit();
-  };
   static async getInitialProps(props) {
     const getRaffles = await factory.methods.getDeployedRaffles().call();
     const raffleItems = await Promise.all(
@@ -95,32 +89,6 @@ class RaffleIndex extends Component {
 
     return (
       <Layout>
-        <Modal
-          trigger={
-            <Button
-              onClick={this.handleOpen}
-              content="Create a new raffle"
-              icon="add circle"
-              color="green"
-            />
-          }
-          open={this.state.modalOpen}
-          onClose={this.handleClose}
-        >
-          <Header
-            icon="add circle"
-            color="green"
-            content="Create a new raffle"
-          />
-          <Modal.Content>
-            <RaffleNew onRef={ref => (this.child = ref)} />
-          </Modal.Content>
-          <Modal.Actions>
-            <Button color="green" onClick={this.handleClose} inverted>
-              <Icon name="checkmark" /> Create my Raffle
-            </Button>
-          </Modal.Actions>
-        </Modal>
         <Dropdown
           onChange={this.handleChange}
           options={options}
