@@ -9,6 +9,7 @@ class AppHeader extends Component {
 
   handleClose = () => {
     this.setState({ modalOpen: false });
+    console.log("this.child ", this.child);
     this.child.onSubmit();
   };
 
