@@ -23,7 +23,6 @@ class AppHeader extends Component {
             <Menu.Item content="Show all raffles" icon="eye" color="blue" />
           </Link>
           <Modal
-            dimmer="blurring"
             trigger={
               <Menu.Item
                 onClick={this.handleOpen}
