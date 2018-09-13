@@ -18,11 +18,8 @@ import { Link } from "../routes";
 
 const options = [
   { key: 1, text: "Draw Date (sooner first)", value: 1 },
-  { key: 2, text: "Draw Date (later first)", value: 2 },
-  { key: 3, text: "Prize amount (more first)", value: 3 },
-  { key: 4, text: "Prize amount (less first)", value: 4 },
-  { key: 5, text: "Sold tickets (more first)", value: 5 },
-  { key: 6, text: "Sold tickets (less first)", value: 6 }
+  { key: 2, text: "Prize amount (more first)", value: 2 },
+  { key: 3, text: "Sold tickets (more first)", value: 3 }
 ];
 class RaffleIndex extends Component {
   state = { value: null };
@@ -52,17 +49,11 @@ class RaffleIndex extends Component {
           {this.props.raffleItems
             .sort((a, b) => {
               if (this.state.value === 1) {
-                return a[6] > b[6];
+                return a[6] - b[6];
               } else if (this.state.value === 2) {
-                return a[6] < b[6];
+                return b[1] - a[1];
               } else if (this.state.value === 3) {
-                return a[1] < b[1];
-              } else if (this.state.value === 4) {
-                return a[1] > b[1];
-              } else if (this.state.value === 5) {
-                return a[2] < b[2];
-              } else if (this.state.value === 6) {
-                return a[2] > b[2];
+                return b[2] - a[2];
               }
             })
             .map((item, index) => {
